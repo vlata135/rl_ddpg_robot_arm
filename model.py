@@ -9,6 +9,7 @@
 ########################################################################################
 # Libraries
 ########################################################################################
+import os
 import numpy as np
 
 import torch
@@ -39,13 +40,23 @@ class Actor(nn.Module):
         self.fc3 = nn.Linear(hidden2, nb_actions)
         self.relu = nn.ReLU()
         self.tanh = nn.Tanh()
-        self.init_weights(init_w)
+        self.path = 'output/Pendulum-v0-run0/actor.pkl'
+
+        #Check and load pretrained model if exist
+        if os.path.exists(self.path):
+            self.load_weights()
+        else:
+            self.init_weights(init_w)
     
     def init_weights(self, init_w):
         self.fc1.weight.data = fanin_init(self.fc1.weight.data.size())
         self.fc2.weight.data = fanin_init(self.fc2.weight.data.size())
         self.fc3.weight.data.uniform_(-init_w, init_w)
-    
+
+    def load_weights(self):
+        print(f"Loading weights from {self.path}")
+        self.load_state_dict(torch.load(self.path))
+
     def forward(self, x):
         out = self.fc1(x)
         out = self.relu(out)
@@ -62,13 +73,23 @@ class Critic(nn.Module):
         self.fc2 = nn.Linear(hidden1+nb_actions, hidden2)
         self.fc3 = nn.Linear(hidden2, 1)
         self.relu = nn.ReLU()
-        self.init_weights(init_w)
+        self.path = 'output/Pendulum-v0-run0/critic.pkl'
+
+        #Check and load pretrained model if exist
+        if os.path.exists(self.path):
+            self.load_weights()
+        else:
+            self.init_weights(init_w)    
+        # self.init_weights(init_w)
     
     def init_weights(self, init_w):
         self.fc1.weight.data = fanin_init(self.fc1.weight.data.size())
         self.fc2.weight.data = fanin_init(self.fc2.weight.data.size())
         self.fc3.weight.data.uniform_(-init_w, init_w)
-    
+    def load_weights(self):
+        print(f"Loading weights from {self.path}")
+        self.load_state_dict(torch.load(self.path))
+
     def forward(self, xs):
         x, a = xs
         out = self.fc1(x)
