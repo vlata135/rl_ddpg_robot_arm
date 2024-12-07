@@ -49,7 +49,7 @@ def train(num_iterations, agent, env,  evaluate, validate_steps, output, max_epi
             if debug: prYellow('[Evaluate] Step_{:07d}: mean_reward:{}'.format(step, validate_reward))
 
         # [optional] save intermideate model
-        if step % int(num_iterations/3) == 0:
+        if step % int(num_iterations/8) == 0:
             agent.save_model(output)
 
         # update 
