@@ -1,10 +1,13 @@
 #!/usr/bin/env python3 
-
+###############################################################################
+# Imports
+###############################################################################
 import numpy as np
 import argparse
 from copy import deepcopy
-import torch
-import gym
+import torch 
+import gymnasium as gym
+import panda_gym
 
 from normalized_env import NormalizedEnv
 from evaluator import Evaluator
@@ -12,6 +15,28 @@ from ddpg import DDPG
 from util import *
 
 # gym.undo_logger_setup()
+
+###############################################################################
+# Functions
+###############################################################################
+
+def flatten(obs):
+    arr_1 = obs[0]["observation"]
+    arr_2 = obs[0]["achieved_goal"]
+    arr_3 = obs[0]["desired_goal"]
+    return np.concatenate([arr_1, arr_2, arr_3]).astype(np.float32)
+
+
+def flatten_2(obs):
+    arr_1 = obs["observation"]
+    arr_2 = obs["achieved_goal"]
+    arr_3 = obs["desired_goal"]
+    return np.concatenate([arr_1, arr_2, arr_3]).astype(np.float32)
+
+
+###############################################################################
+# Training
+###############################################################################
 
 def train(num_iterations, agent, env,  evaluate, validate_steps, output, max_episode_length=None, debug=False):
 
@@ -23,6 +48,7 @@ def train(num_iterations, agent, env,  evaluate, validate_steps, output, max_epi
         # reset if it is the start of episode
         if observation is None:
             observation = deepcopy(env.reset())
+            observation = flatten(observation)
             agent.reset(observation)
 
         # agent pick action ...
@@ -32,8 +58,11 @@ def train(num_iterations, agent, env,  evaluate, validate_steps, output, max_epi
             action = agent.select_action(observation)
         
         # env response with next_observation, reward, terminate_info
-        observation2, reward, done, info = env.step(action)
-        observation2 = deepcopy(observation2)
+        observation2, reward, done, truncated, info = env.step(action)
+        # observation2 = deepcopy(observation2)
+        observation2 = flatten_2(observation2)
+        print("Observation 2: ", observation2)
+        
         if max_episode_length and episode_steps >= max_episode_length -1:
             done = True
 
@@ -73,6 +102,10 @@ def train(num_iterations, agent, env,  evaluate, validate_steps, output, max_epi
             episode_reward = 0.
             episode += 1
 
+###############################################################################
+# Testing
+###############################################################################
+
 def test(num_episodes, agent, env, evaluate, model_path, visualize=True, debug=False):
 
     agent.load_weights(model_path)
@@ -85,12 +118,17 @@ def test(num_episodes, agent, env, evaluate, model_path, visualize=True, debug=F
         if debug: prYellow('[Evaluate] #{}: mean_reward:{}'.format(i, validate_reward))
 
 
+
+###############################################################################
+# Entry Point
+###############################################################################
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='PyTorch on TORCS with Multi-modal')
 
     parser.add_argument('--mode', default='train', type=str, help='support option: train/test')
-    parser.add_argument('--env', default='Pendulum-v0', type=str, help='open-ai gym environment')
+    parser.add_argument('--env', default='PandaPickAndPlace-v3', type=str, help='open-ai gym environment')
     parser.add_argument('--hidden1', default=400, type=int, help='hidden num of first fully connect layer')
     parser.add_argument('--hidden2', default=300, type=int, help='hidden num of second fully connect layer')
     parser.add_argument('--rate', default=0.001, type=float, help='learning rate')
@@ -120,7 +158,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.output = get_output_folder(args.output, args.env)
     if args.resume == 'default':
-        args.resume = 'output/{}-run0'.format(args.env)
+        args.resume = 'output/{}-run6'.format(args.env)
 
     # env = NormalizedEnv(gym.make(args.env))
     env = gym.make(args.env)
@@ -129,8 +167,13 @@ if __name__ == "__main__":
         np.random.seed(args.seed)
         env.seed(args.seed)
 
-    nb_states = env.observation_space.shape[0]
-    nb_actions = env.action_space.shape[0]
+    # nb_states = env.observation_space.shape[0]
+    # nb_actions = env.action_space.shape[0]
+    
+
+    nb_states = 25
+    nb_actions = 4
+    
 
 
     agent = DDPG(nb_states, nb_actions, args)

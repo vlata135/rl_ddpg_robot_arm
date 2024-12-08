@@ -5,6 +5,26 @@ from scipy.io import savemat
 
 from util import *
 
+########################################################################################
+# Functions
+########################################################################################
+
+def flatten(obs):
+    arr_1 = obs[0]["observation"]
+    arr_2 = obs[0]["achieved_goal"]
+    arr_3 = obs[0]["desired_goal"]
+    return np.concatenate([arr_1, arr_2, arr_3]).astype(np.float32)
+
+
+def flatten_2(obs):
+    arr_1 = obs["observation"]
+    arr_2 = obs["achieved_goal"]
+    arr_3 = obs["desired_goal"]
+    return np.concatenate([arr_1, arr_2, arr_3]).astype(np.float32)
+
+########################################################################################
+# Classes
+########################################################################################
 class Evaluator(object):
 
     def __init__(self, num_episodes, interval, save_path='', max_episode_length=None):
@@ -24,6 +44,7 @@ class Evaluator(object):
 
             # reset at the start of episode
             observation = env.reset()
+            observation = flatten(observation)
             episode_steps = 0
             episode_reward = 0.
                 
@@ -35,7 +56,8 @@ class Evaluator(object):
                 # basic operation, action ,reward, blablabla ...
                 action = policy(observation)
 
-                observation, reward, done, info = env.step(action)
+                observation, reward, done, truncated, info = env.step(action)
+                observation = flatten_2(observation)
                 if self.max_episode_length and episode_steps >= self.max_episode_length -1:
                     done = True
                 
