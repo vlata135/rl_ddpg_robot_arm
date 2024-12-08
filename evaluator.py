@@ -62,7 +62,7 @@ class Evaluator(object):
                     done = True
                 
                 if visualize:
-                    env.render(mode='human')
+                    env.render()
 
                 # update
                 episode_reward += reward
