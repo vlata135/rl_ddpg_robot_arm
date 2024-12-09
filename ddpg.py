@@ -76,7 +76,7 @@ class DDPG(object):
         self.depsilon = 1.0 / args.epsilon
 
         # 
-        self.epsilon = 1.0
+        self.epsilon = 100.0
         self.s_t = None # Most recent state
         self.a_t = None # Most recent action
         self.is_training = True
