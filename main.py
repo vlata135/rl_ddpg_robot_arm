@@ -162,8 +162,8 @@ if __name__ == "__main__":
 
     # env = NormalizedEnv(gym.make(args.env))
     # env = gym.make(args.env, render_mode="human")
-    env = gym.make(args.env, reward_type="dense", render_mode="human")
-    # env = gym.make(args.env, reward_type="dense")
+    # env = gym.make(args.env, reward_type="dense", render_mode="human")
+    env = gym.make(args.env, reward_type="dense")
 
 
     if args.seed > 0: 
