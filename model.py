@@ -40,7 +40,7 @@ class Actor(nn.Module):
         self.fc3 = nn.Linear(hidden2, nb_actions)
         self.relu = nn.ReLU()
         self.tanh = nn.Tanh()
-        self.path = 'output/PandaPickAndPlace-v3-run108/actor.pkl'
+        self.path = 'output/PandaPickAndPlace-v3-run114/actor.pkl'
 
         #Check and load pretrained model if exist
         if os.path.exists(self.path):
@@ -73,7 +73,7 @@ class Critic(nn.Module):
         self.fc2 = nn.Linear(hidden1+nb_actions, hidden2)
         self.fc3 = nn.Linear(hidden2, 1)
         self.relu = nn.ReLU()
-        self.path = 'output/PandaPickAndPlace-v3-run108/critic.pkl'
+        self.path = 'output/PandaPickAndPlace-v3-run114/critic.pkl'
 
         #Check and load pretrained model if exist
         if os.path.exists(self.path):

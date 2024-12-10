@@ -6,8 +6,8 @@ import argparse
 from copy import deepcopy
 import torch 
 import gymnasium as gym
+# import panda_gym
 import panda_gym
-
 from normalized_env import NormalizedEnv
 from evaluator import Evaluator
 from ddpg import DDPG
@@ -133,9 +133,9 @@ if __name__ == "__main__":
     parser.add_argument('--hidden2', default=300, type=int, help='hidden num of second fully connect layer')
     parser.add_argument('--rate', default=0.001, type=float, help='learning rate')
     parser.add_argument('--prate', default=0.0001, type=float, help='policy net learning rate (only for DDPG)')
-    parser.add_argument('--warmup', default=1000, type=int, help='time without training but only filling the replay memory')
+    parser.add_argument('--warmup', default=2000, type=int, help='time without training but only filling the replay memory')
     parser.add_argument('--discount', default=0.99, type=float, help='')
-    parser.add_argument('--bsize', default=640, type=int, help='minibatch size')
+    parser.add_argument('--bsize', default=1000, type=int, help='minibatch size')
     parser.add_argument('--rmsize', default=6000000, type=int, help='memory size')
     parser.add_argument('--window_length', default=1, type=int, help='')
     parser.add_argument('--tau', default=0.001, type=float, help='moving average for target network')
@@ -148,7 +148,7 @@ if __name__ == "__main__":
     parser.add_argument('--output', default='output', type=str, help='')
     parser.add_argument('--debug', dest='debug', action='store_true')
     parser.add_argument('--init_w', default=0.003, type=float, help='') 
-    parser.add_argument('--train_iter', default=200000, type=int, help='train iters each timestep')
+    parser.add_argument('--train_iter', default=700000, type=int, help='train iters each timestep')
     parser.add_argument('--epsilon', default=50000, type=int, help='linear decay of exploration policy')
     parser.add_argument('--seed', default=-1, type=int, help='')
     parser.add_argument('--resume', default='default', type=str, help='Resuming model path for testing')
@@ -158,11 +158,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.output = get_output_folder(args.output, args.env)
     if args.resume == 'default':
-        args.resume = 'output/{}-run99'.format(args.env)
+        args.resume = 'output/{}-run114'.format(args.env)
 
     # env = NormalizedEnv(gym.make(args.env))
     # env = gym.make(args.env, render_mode="human")
     env = gym.make(args.env, reward_type="dense", render_mode="human")
+    # env = gym.make(args.env, reward_type="dense")
 
 
     if args.seed > 0: 
