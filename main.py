@@ -127,7 +127,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='PyTorch on TORCS with Multi-modal')
 
-    parser.add_argument('--mode', default='train', type=str, help='support option: train/test')
+    parser.add_argument('--mode', default='test', type=str, help='support option: train/test')
     parser.add_argument('--env', default='PandaPickAndPlace-v3', type=str, help='open-ai gym environment')
     parser.add_argument('--hidden1', default=400, type=int, help='hidden num of first fully connect layer')
     parser.add_argument('--hidden2', default=300, type=int, help='hidden num of second fully connect layer')
@@ -158,12 +158,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.output = get_output_folder(args.output, args.env)
     if args.resume == 'default':
-        args.resume = 'output/{}-run114'.format(args.env)
+        args.resume = 'output/{}-run117'.format(args.env)
 
     # env = NormalizedEnv(gym.make(args.env))
     # env = gym.make(args.env, render_mode="human")
-    # env = gym.make(args.env, reward_type="dense", render_mode="human")
-    env = gym.make(args.env, reward_type="dense")
+    env = gym.make(args.env, reward_type="dense", render_mode="human")
+    # env = gym.make(args.env, reward_type="dense")
 
 
     if args.seed > 0: 
