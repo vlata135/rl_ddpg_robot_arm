@@ -133,9 +133,9 @@ if __name__ == "__main__":
     parser.add_argument('--hidden2', default=300, type=int, help='hidden num of second fully connect layer')
     parser.add_argument('--rate', default=0.001, type=float, help='learning rate')
     parser.add_argument('--prate', default=0.0001, type=float, help='policy net learning rate (only for DDPG)')
-    parser.add_argument('--warmup', default=2000, type=int, help='time without training but only filling the replay memory')
+    parser.add_argument('--warmup', default=5000, type=int, help='time without training but only filling the replay memory')
     parser.add_argument('--discount', default=0.99, type=float, help='')
-    parser.add_argument('--bsize', default=1000, type=int, help='minibatch size')
+    parser.add_argument('--bsize', default=1500, type=int, help='minibatch size')
     parser.add_argument('--rmsize', default=6000000, type=int, help='memory size')
     parser.add_argument('--window_length', default=1, type=int, help='')
     parser.add_argument('--tau', default=0.001, type=float, help='moving average for target network')
@@ -158,7 +158,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.output = get_output_folder(args.output, args.env)
     if args.resume == 'default':
-        args.resume = 'output/{}-run117'.format(args.env)
+        args.resume = 'output/{}-run57'.format(args.env)
 
     # env = NormalizedEnv(gym.make(args.env))
     # env = gym.make(args.env, render_mode="human")

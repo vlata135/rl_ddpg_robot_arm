@@ -30,7 +30,7 @@ class PyBullet:
         renderer: str = "Tiny",
     ) -> None:
         self.render_mode = render_mode
-        background_color = background_color if background_color is not None else np.array([223.0, 54.0, 45.0])
+        background_color = background_color if background_color is not None else np.array([255.0, 204.0, 153.0])
         self.background_color = background_color.astype(np.float32) / 255
         options = "--background_color_red={} --background_color_green={} --background_color_blue={}".format(
             *self.background_color
