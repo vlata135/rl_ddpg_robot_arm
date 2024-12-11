@@ -1,10 +1,9 @@
-#!/usr/bin/env python3 
-
+# Description: Main file to run the DDPG algorithm on the Ant-v4 environment.
 import numpy as np
 import argparse
 from copy import deepcopy
 import torch
-import gym
+import gymnasium as gym
 
 from normalized_env import NormalizedEnv
 from evaluator import Evaluator
@@ -22,7 +21,7 @@ def train(num_iterations, agent, env,  evaluate, validate_steps, output, max_epi
     while step < num_iterations:
         # reset if it is the start of episode
         if observation is None:
-            observation = deepcopy(env.reset())
+            observation, info = deepcopy(env.reset())
             agent.reset(observation)
 
         # agent pick action ...
@@ -32,7 +31,7 @@ def train(num_iterations, agent, env,  evaluate, validate_steps, output, max_epi
             action = agent.select_action(observation)
         
         # env response with next_observation, reward, terminate_info
-        observation2, reward, done, info = env.step(action)
+        observation2, reward, done, info, _ = env.step(action)
         observation2 = deepcopy(observation2)
         if max_episode_length and episode_steps >= max_episode_length -1:
             done = True
@@ -90,27 +89,27 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='PyTorch on TORCS with Multi-modal')
 
     parser.add_argument('--mode', default='train', type=str, help='support option: train/test')
-    parser.add_argument('--env', default='Pendulum-v0', type=str, help='open-ai gym environment')
+    parser.add_argument('--env', default='Hopper-v5', type=str, help='open-ai gym environment')
     parser.add_argument('--hidden1', default=400, type=int, help='hidden num of first fully connect layer')
     parser.add_argument('--hidden2', default=300, type=int, help='hidden num of second fully connect layer')
     parser.add_argument('--rate', default=0.001, type=float, help='learning rate')
     parser.add_argument('--prate', default=0.0001, type=float, help='policy net learning rate (only for DDPG)')
-    parser.add_argument('--warmup', default=100, type=int, help='time without training but only filling the replay memory')
+    parser.add_argument('--warmup', default=10000, type=int, help='time without training but only filling the replay memory')
     parser.add_argument('--discount', default=0.99, type=float, help='')
-    parser.add_argument('--bsize', default=64, type=int, help='minibatch size')
+    parser.add_argument('--bsize', default=128, type=int, help='minibatch size')
     parser.add_argument('--rmsize', default=6000000, type=int, help='memory size')
     parser.add_argument('--window_length', default=1, type=int, help='')
-    parser.add_argument('--tau', default=0.001, type=float, help='moving average for target network')
+    parser.add_argument('--tau', default=0.01, type=float, help='moving average for target network')
     parser.add_argument('--ou_theta', default=0.15, type=float, help='noise theta')
     parser.add_argument('--ou_sigma', default=0.2, type=float, help='noise sigma') 
     parser.add_argument('--ou_mu', default=0.0, type=float, help='noise mu') 
     parser.add_argument('--validate_episodes', default=20, type=int, help='how many episode to perform during validate experiment')
-    parser.add_argument('--max_episode_length', default=500, type=int, help='')
+    parser.add_argument('--max_episode_length', default=700, type=int, help='')
     parser.add_argument('--validate_steps', default=2000, type=int, help='how many steps to perform a validate experiment')
     parser.add_argument('--output', default='output', type=str, help='')
     parser.add_argument('--debug', dest='debug', action='store_true')
     parser.add_argument('--init_w', default=0.003, type=float, help='') 
-    parser.add_argument('--train_iter', default=200000, type=int, help='train iters each timestep')
+    parser.add_argument('--train_iter', default=400000, type=int, help='train iters each timestep')
     parser.add_argument('--epsilon', default=50000, type=int, help='linear decay of exploration policy')
     parser.add_argument('--seed', default=-1, type=int, help='')
     parser.add_argument('--resume', default='default', type=str, help='Resuming model path for testing')
@@ -120,10 +119,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
     args.output = get_output_folder(args.output, args.env)
     if args.resume == 'default':
-        args.resume = 'output/{}-run0'.format(args.env)
+        args.resume = 'output/{}-run86'.format(args.env)
 
     # env = NormalizedEnv(gym.make(args.env))
-    env = gym.make(args.env)
+    env = gym.make(args.env, render_mode="human")
+    # env = gym.make(args.env)
+
 
     if args.seed > 0:
         np.random.seed(args.seed)

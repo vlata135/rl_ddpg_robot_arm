@@ -40,7 +40,7 @@ class Actor(nn.Module):
         self.fc3 = nn.Linear(hidden2, nb_actions)
         self.relu = nn.ReLU()
         self.tanh = nn.Tanh()
-        self.path = 'output/Pendulum-v0-run6/actor.pkl'
+        self.path = 'output/Hopper-v5-run89/actor.pklv'
 
         #Check and load pretrained model if exist
         if os.path.exists(self.path):
@@ -73,7 +73,7 @@ class Critic(nn.Module):
         self.fc2 = nn.Linear(hidden1+nb_actions, hidden2)
         self.fc3 = nn.Linear(hidden2, 1)
         self.relu = nn.ReLU()
-        self.path = 'output/Pendulum-v0-run6/critic.pkl'
+        self.path = 'output/Hopper-v5-run89/critic.pklv'
 
         #Check and load pretrained model if exist
         if os.path.exists(self.path):

@@ -23,7 +23,7 @@ class Evaluator(object):
         for episode in range(self.num_episodes):
 
             # reset at the start of episode
-            observation = env.reset()
+            observation, info = env.reset()
             episode_steps = 0
             episode_reward = 0.
                 
@@ -35,12 +35,12 @@ class Evaluator(object):
                 # basic operation, action ,reward, blablabla ...
                 action = policy(observation)
 
-                observation, reward, done, info = env.step(action)
+                observation, reward, done, info, _ = env.step(action)
                 if self.max_episode_length and episode_steps >= self.max_episode_length -1:
                     done = True
                 
                 if visualize:
-                    env.render(mode='human')
+                    env.render()
 
                 # update
                 episode_reward += reward
@@ -58,7 +58,7 @@ class Evaluator(object):
 
     def save_results(self, fn):
 
-        y = np.mean(self.results, axis=0)
+        y = np.mean(self.results, axis=0) # mean of each column
         error=np.std(self.results, axis=0)
                     
         x = range(0,self.results.shape[1]*self.interval,self.interval)
